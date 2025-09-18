@@ -1,0 +1,60 @@
+:root{
+    --main-color:#651FFF;
+    --second-color:green;
+}
+
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+a{
+    text-decoration: none;
+    display: inline-block;
+}
+
+.my-text-primary{
+    color:var(--main-color);
+}
+
+
+
+/* Section padding */
+.banner,
+.hero,
+.lightning{
+    padding: 100px 0px;
+}
+
+/* Heading size */
+h1{
+    font-size: 56px;
+    font-weight:700;
+}
+
+h2{
+    font-size: 48px;
+    font-weight:700;
+}
+
+/* Banner start */
+
+.banner{
+    background-color: #EBE5FA;
+}
+
+
+
+/* Hero start */
+
+.lightning-wrapper > div > div > div{
+    background-color:var(--main-color);
+    padding: 60px 30px;
+    border-radius: 20px;
+    color: #ffffff;
+}
+
+.lightning-wrapper > div > div > div a{
+    color: #ffffff;
+}

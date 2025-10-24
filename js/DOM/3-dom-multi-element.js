@@ -24,7 +24,7 @@ const items = document.getElementsByClassName("collection-item");
 
 const arr = [1,2,3,4,5];
 
-console.log(arr);
+// console.log(arr);
 
 // for(let i = 0; i < arr.length; i++){
 //     console.log(arr[i]);
@@ -35,12 +35,23 @@ console.log(arr);
 //     console.log(array);
 // });
 
-console.log(items);
+// console.log(items);
 
 let lists = Array.from(items);
 
-console.log(lists);
+// console.log(lists);
 
 lists.forEach(function(element){
     element.style.color = "blue";
+});
+
+// NodeList
+const listItems = document.querySelectorAll(".collection-item");
+
+
+// console.log(Array.isArray(listItems));
+
+
+listItems.forEach(function(element, index, array){
+    console.log(element, index, array);
 })

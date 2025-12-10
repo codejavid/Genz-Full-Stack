@@ -6,92 +6,113 @@
 
 // ITEM CONTROLLER
 
-const itemCtrl = (function(){
+const itemCtrl = (function () {
+
+
+    const API_BASE_URL = "https://69397939c8d59937aa0800e8.mockapi.io/expense/tasks";
 
     // Item COnstructor
-    const Item = function(id, name, money){
+    const Item = function (id, name, money) {
         this.id = id,
-        this.name = name,
-        this.money = money;
+            this.name = name,
+            this.money = money;
     }
 
     // Data structure
 
     const data = {
-        items:[
-            {id:0, name:"Clothes", money:10000},
-            {id:1, name:"Food", money:5000},
-            {id:2, name:"Bike Service", money:3000},
+        items: [
+            // { id: 0, name: "Clothes", money: 10000 },
+            // { id: 1, name: "Food", money: 5000 },
+            // { id: 2, name: "Bike Service", money: 3000 },
         ],
-        totalMoney:0,
-        currentItem:null
+        totalMoney: 0,
+        currentItem: null
     }
 
 
     return {
-        getData:function(){
-            return data;
-        },
-        getItem: function(){
-            return data.items;
-        },
-        addItem(name, money){
+        // Load items
+        loadItems: async function () {
 
-           
-           
-            let ID; 
+            try {
 
-            // Create a ID
+                const response = await fetch(API_BASE_URL);
+                if(!response.ok) throw new Error("Failed to fetch the items");
 
-            if(data.items.length > 0){
+                const items = await response.json();
 
-                ID = data.items[data.items.length - 1].id + 1;
+                data.items = items;
+                return items;
 
-                
-                money = parseInt(money);
-
-                // Create a new item
-                let newItem = new Item(ID, name, money);
-
-                // Add to item array
-                data.items.push(newItem);
-
-                return newItem;
-               
-                
-
-            }else{
-                ID = 0;
+            } catch (error) {
+                console.log(error);
             }
 
         },
-        getTotalMoney:function(){
+        getData: function () {
+            return data;
+        },
+        getItem: function () {
+            return data.items;
+        },
+
+        addItem: async function (name, money) {
+
+            console.log(name, money)
+          
+            try{
+
+                const response = await fetch(API_BASE_URL, {
+                    method:"POST",
+                    headers:{
+                        "Content-type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        name:name,
+                        money:parseInt(money)
+                    })
+                });
+
+
+                if(!response.ok) throw new Error("Failed to fetch the items");
+
+                const newItem = await response.json();
+                data.items.push(newItem);
+                return newItem;
+
+            }catch(error){
+                console.log(error);
+            }
+            
+        },
+        getTotalMoney: function () {
 
             let total = 0;
 
-            if(data.items.length > 0){
+            if (data.items.length > 0) {
 
-                data.items.forEach(function(item){
-                    
+                data.items.forEach(function (item) {
+
                     total += item.money;
 
-                    data.totalMoneytotalMoney = total
+                    data.totalMoney = total
                 })
 
-            } else{
+            } else {
                 return data.totalMoney = 0;
             }
 
             return total;
 
         },
-        getItemByID:function(id){
+        getItemByID: function (id) {
 
             let found = null;
 
             // Loop throught the items
-            data.items.forEach(function(item){
-                if(item.id === id){
+            data.items.forEach(function (item) {
+                if (item.id === id) {
                     found = item;
                 }
             })
@@ -99,11 +120,53 @@ const itemCtrl = (function(){
             return found;
 
         },
-        setCurrentItem:function(item){
+        setCurrentItem: function (item) {
             data.currentItem = item
         },
-        getCurrentItem:function(){
+        getCurrentItem: function () {
             return data.currentItem;
+        },
+        deleteItem: async function (id) {
+            
+            try{
+                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                    method:"DELETE"
+                });
+
+                if(!response.ok) throw new Error("Failed to fetch the items");
+
+                data.items = data.items.filter(item => item.id !== parseInt(id));
+
+                return true;
+                
+            }catch(error){
+                console.log(error);
+            }
+
+        },
+        updateItem: function (name, money) {
+
+            money = Number(money);
+
+            let found = null;
+
+            data.items.forEach(function (item) {
+
+                if (item.id === data.currentItem.id) {
+
+                    item.name = name,
+                        item.money = money,
+                        found = item
+
+                }
+
+            })
+
+            return found;
+
+        },
+        clearAllItems: function () {
+            data.items = [];
         }
     }
 
@@ -112,16 +175,16 @@ const itemCtrl = (function(){
 
 // UI CONTROLLER
 
-const UICtrl = (function(){
-    
+const UICtrl = (function () {
+
 
     return {
-        populateItemList:function(items){
-            
+        populateItemList: function (items) {
+
             let html = "";
 
-            items.forEach(function(item){
-                
+            items.forEach(function (item) {
+
                 html += `<li class="collection-item" id=item-${item.id}>
                             <strong>${item.name}</strong> :
                             <em>${item.money} Rs</em>
@@ -136,13 +199,13 @@ const UICtrl = (function(){
             document.querySelector("#item-list").innerHTML = html;
 
         },
-        getItemInput: function(){
+        getItemInput: function () {
             return {
-                name:document.querySelector("#name").value,
-                money:document.querySelector("#money").value
+                name: document.querySelector("#name").value,
+                money: document.querySelector("#money").value
             }
         },
-        addListItem:function(newItem){
+        addListItem: function (newItem) {
 
             console.log(newItem);
 
@@ -167,29 +230,64 @@ const UICtrl = (function(){
             // Insert the li into ul
             document.querySelector("#item-list").appendChild(li);
         },
-        showTotalMoney:function(total){
-           document.querySelector(".total").innerText = total;
+        showTotalMoney: function (total) {
+            document.querySelector(".total").innerText = total;
         },
-        clearInputState:function(){
+        clearInputState: function () {
             document.querySelector("#name").value = "";
             document.querySelector("#money").value = "";
         },
-        clearEditState:function(){
+        clearEditState: function () {
             document.querySelector(".add-btn").style.display = "inline";
             document.querySelector(".update-btn").style.display = "none";
             document.querySelector(".delete-btn").style.display = "none";
             document.querySelector(".back-btn").style.display = "none";
         },
-        showEditState:function(){
+        showEditState: function () {
             document.querySelector(".add-btn").style.display = "none";
             document.querySelector(".update-btn").style.display = "inline";
             document.querySelector(".delete-btn").style.display = "inline";
             document.querySelector(".back-btn").style.display = "inline";
         },
-        addItemToForm:function(){
+        addItemToForm: function () {
             document.querySelector("#name").value = itemCtrl.getCurrentItem().name;
             document.querySelector("#money").value = itemCtrl.getCurrentItem().money;
+        },
+        deleteListItem: function (id) {
+
+            const itemID = `#item-${id}`;
+
+            const item = document.querySelector(`${itemID}`);
+
+            item.remove();
+        },
+        updateListItem: function (item) {
+
+            let listItems = document.querySelectorAll(".collection-item");
+
+            listItems.forEach(function (listItem) {
+
+                // const itemID = listItem.id;
+                const itemID = listItem.getAttribute("id");
+
+                if (itemID === `item-${item.id}`) {
+
+                    document.querySelector(`#${itemID}`).innerHTML = `
+                    <strong>${item.name}</strong> :
+                    <em>${item.money} Rs</em>
+                    <a href="#" class="secondary-content">
+                        <i class="fa-solid fa-pencil edit-item"></i>
+                    </a>
+                   `
+
+                }
+            })
+
+        },
+        clearItems: function () {
+            document.querySelector("#item-list").innerHTML = "";
         }
+
     }
 
 
@@ -199,12 +297,12 @@ const UICtrl = (function(){
 
 // APP CONTROLLER  
 
-const App = (function(){
+const App = (function () {
 
 
     // Events 
 
-    const loadEventListeners = function(){
+    const loadEventListeners = function () {
 
         console.log("All Events");
 
@@ -214,35 +312,54 @@ const App = (function(){
         // Edit icon click
         document.querySelector("#item-list").addEventListener("click", itemEditClick);
 
+        // Delete icon click
+        document.querySelector(".delete-btn").addEventListener("click", itemDeleteSubmit);
+
+        // Edit icon click
+        document.querySelector(".update-btn").addEventListener("click", itemEditSubmit);
+
+        // Edit icon click
+        document.querySelector(".clear-btn").addEventListener("click", itemClearSubmit);
+
+        // Edit icon click
+        document.querySelector(".back-btn").addEventListener("click", backClick);
+
     }
 
-    const itemAddSubmit = function(e){
-        
+    const itemAddSubmit = async function (e) {
+
+
+        e.preventDefault();
+
         // Get the value from input
         const input = UICtrl.getItemInput();
 
         // Validation
-        if(input.name === "" || input.money === ""){
+        if (input.name === "" || input.money === "") {
 
             alert("Please fill the fields");
 
-        }else{
+        } else {
 
             // Add item to array
-            const newItem = itemCtrl.addItem(input.name, input.money);
+            const newItem = await itemCtrl.addItem(input.name, input.money);
 
-            // Add item to UI
-            UICtrl.addListItem(newItem);
+            if(newItem){
+                // Add item to UI
+                UICtrl.addListItem(newItem);
 
-            // Get a total money
-            const totalMoney = itemCtrl.getTotalMoney();
+                // Get a total money
+                const totalMoney = itemCtrl.getTotalMoney();
 
-            // Show total money
-            UICtrl.showTotalMoney(totalMoney);
+                // Show total money
+                UICtrl.showTotalMoney(totalMoney);
 
-            // Clear UI input value
-            UICtrl.clearInputState();
+                // Clear UI input value
+                UICtrl.clearInputState();
+            }
+
             
+
 
 
         }
@@ -250,64 +367,160 @@ const App = (function(){
 
     }
 
-    const itemEditClick =function(e){
-      if(e.target.classList.contains("edit-item")){
 
-        const listID = e.target.parentElement.parentElement.id;
 
-        // Break into array
-        const listArr = listID.split("-");
 
-        // Get the actual ID
-        const id = parseInt(listArr[1]);
+    const itemEditClick = function (e) {
 
-        // Get item from data
-        const itemToEdit = itemCtrl.getItemByID(id);
+        e.preventDefault();
 
-        // Set Current Item
-        itemCtrl.setCurrentItem(itemToEdit);
+        if (e.target.classList.contains("edit-item")) {
 
-        // Add item to form
-        UICtrl.addItemToForm();
+            const listItem = e.target.closest(".collection-item");
+            const listID = listItem.id;
 
-        
-        UICtrl.showEditState();
-        
-      }
+            const listArr = listID.split("-");
+
+            const id = listArr[1];
+            
+            const itemToEdit = itemCtrl.getItemByID(id);
+
+            console.log(itemToEdit); 
+
+            if(itemToEdit){
+                itemCtrl.setCurrentItem(itemToEdit);
+                UICtrl.addItemToForm();
+                UICtrl.showEditState();
+            }
+
+        }
     }
+
+    const itemDeleteSubmit = async function (e) {
+
+        // Get the current item
+        const currentItem = itemCtrl.getCurrentItem();
+
+        // Delete from the data structure
+        const deleted = await itemCtrl.deleteItem(currentItem.id);
+
+       if(deleted){
+            // Delete from UI
+            UICtrl.deleteListItem(currentItem.id);
+
+            // Get a total money
+            const totalMoney = itemCtrl.getTotalMoney();
     
+            // Show total money
+            UICtrl.showTotalMoney(totalMoney);
+    
+            // Clear all three btn
+            UICtrl.clearEditState();
+    
+            // Clear UI input value
+            UICtrl.clearInputState();
+       }
 
-    return {
-      start:function(){
-        console.log("App started");
+    }
 
+    const itemEditSubmit = function (e) {
+
+        // Get the input from UI
+        const input = UICtrl.getItemInput();
+
+        // Update item in the data structure
+        const updateItem = itemCtrl.updateItem(input.name, input.money);
+
+        // Update the UI
+        UICtrl.updateListItem(updateItem);
+
+        // Get a total money
+        const totalMoney = itemCtrl.getTotalMoney();
+
+        // Show total money
+        UICtrl.showTotalMoney(totalMoney);
 
         // Clear all three btn
         UICtrl.clearEditState();
 
-        const items = itemCtrl.getItem();
+        // Clear UI input value
+        UICtrl.clearInputState();
 
-        if(items.length > 0){
-            
-            UICtrl.populateItemList(items);
 
-            // Get a total money
-            const totalMoney = itemCtrl.getTotalMoney();
+    }
 
-            // Show total money
-            UICtrl.showTotalMoney(totalMoney);
+    const backClick = function () {
+
+        // Clear the edit value
+        UICtrl.clearEditState();
+
+        // Clear the input value
+        UICtrl.clearInputState();
+    }
+
+    const itemClearSubmit = function () {
+
+        // Clear all from the data structure
+        itemCtrl.clearAllItems();
+
+        // CLear all from the UI
+        UICtrl.clearItems();
+
+        // Get a total money
+        const totalMoney = itemCtrl.getTotalMoney();
+
+        // Show total money
+        UICtrl.showTotalMoney(totalMoney);
+
+    }
+
+
+    return {
+        start: async function () {
 
             loadEventListeners();
-        }else{
-            console.log("NO Items");
+
+            console.log("App started");
+
+            // Clear all three btn
+            UICtrl.clearEditState();
+
+
+            try {
+
+                // const items = itemCtrl.getItem();
+                const items = await itemCtrl.loadItems();
+
+                if (items.length > 0) {
+
+                    UICtrl.populateItemList(items);
+
+                    // Get a total money
+                    const totalMoney = itemCtrl.getTotalMoney();
+
+                    // Show total money
+                    UICtrl.showTotalMoney(totalMoney);
+
+                    
+                } else {
+                    console.log("NO Items");
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+
+
         }
-      }
     }
 
 
 })();
 
+
+
 App.start();
+
 
 
 

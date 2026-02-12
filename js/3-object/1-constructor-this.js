@@ -11,6 +11,11 @@ function Person(firstName, lastName) {
 
 }
 
+const test1 = new Person("A","B");
+
+console.log(test1);
+
+
 const person1 = new Person("Jagan", "Javid");
 const person2 = new Person("Arun", "Kumar");
 

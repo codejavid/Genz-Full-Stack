@@ -43,6 +43,7 @@ const itemCtrl = (function () {
                 const items = await response.json();
 
                 data.items = items;
+
                 return items;
 
             } catch (error) {
@@ -58,8 +59,6 @@ const itemCtrl = (function () {
         },
 
         addItem: async function (name, money) {
-
-            console.log(name, money)
           
             try{
 
@@ -88,9 +87,11 @@ const itemCtrl = (function () {
         },
         getTotalMoney: function () {
 
+
             let total = 0;
 
             if (data.items.length > 0) {
+              
 
                 data.items.forEach(function (item) {
 
@@ -144,29 +145,60 @@ const itemCtrl = (function () {
             }
 
         },
-        updateItem: function (name, money) {
+        updateItem: async function (name, money) {
 
-            money = Number(money);
+           try{
 
-            let found = null;
+            const id = data.currentItem.id;
 
-            data.items.forEach(function (item) {
-
-                if (item.id === data.currentItem.id) {
-
-                    item.name = name,
-                        item.money = money,
-                        found = item
-
-                }
-
+            const response = await fetch(`${API_BASE_URL}/${id}`, {
+                method:"PUT",
+                headers:{
+                    "Content-type":"application/json"
+                },
+                body:JSON.stringify({
+                    name:name,
+                    money:parseInt(money)
+                })
             })
 
-            return found;
+            if(!response.ok) throw new Error("Failed to fetch the items");
+
+            const updateItem = await response.json();
+
+            const index = data.items.findIndex(item => item.id === id);
+
+            if(index > -1){
+                data.items[index] = updateItem;
+            }
+
+            return updateItem;
+
+
+           }catch(error){
+            console.log(error);
+           }
+
+           
 
         },
-        clearAllItems: function () {
-            data.items = [];
+        clearAllItems: async function () {
+
+            try{
+
+                for(let item of data.items){
+                    await fetch(`${API_BASE_URL}/${item.id}`, {
+                        method:"DELETE"
+                    });
+                }
+
+                data.items = [];
+
+                return true;
+                
+            }catch(error){
+                console.log(error);
+            }
         }
     }
 
@@ -336,9 +368,7 @@ const App = (function () {
 
         // Validation
         if (input.name === "" || input.money === "") {
-
             alert("Please fill the fields");
-
         } else {
 
             // Add item to array
@@ -357,18 +387,8 @@ const App = (function () {
                 // Clear UI input value
                 UICtrl.clearInputState();
             }
-
-            
-
-
-
         }
-
-
     }
-
-
-
 
     const itemEditClick = function (e) {
 
@@ -384,8 +404,6 @@ const App = (function () {
             const id = listArr[1];
             
             const itemToEdit = itemCtrl.getItemByID(id);
-
-            console.log(itemToEdit); 
 
             if(itemToEdit){
                 itemCtrl.setCurrentItem(itemToEdit);
@@ -423,29 +441,37 @@ const App = (function () {
 
     }
 
-    const itemEditSubmit = function (e) {
+    const itemEditSubmit = async function (e) {
+
+        e.preventDefault();
 
         // Get the input from UI
         const input = UICtrl.getItemInput();
 
         // Update item in the data structure
-        const updateItem = itemCtrl.updateItem(input.name, input.money);
+        const updateItem = await itemCtrl.updateItem(input.name, input.money);
 
-        // Update the UI
-        UICtrl.updateListItem(updateItem);
 
-        // Get a total money
-        const totalMoney = itemCtrl.getTotalMoney();
+        try{
+            if(updateItem){
+                    // Update the UI
+                    UICtrl.updateListItem(updateItem);
 
-        // Show total money
-        UICtrl.showTotalMoney(totalMoney);
+                    // Get a total money
+                    const totalMoney = itemCtrl.getTotalMoney();
 
-        // Clear all three btn
-        UICtrl.clearEditState();
+                    // Show total money
+                    UICtrl.showTotalMoney(totalMoney);
 
-        // Clear UI input value
-        UICtrl.clearInputState();
+                    // Clear all three btn
+                    UICtrl.clearEditState();
 
+                    // Clear UI input value
+                    UICtrl.clearInputState();
+            }
+        }catch(error){
+            console.log(error);
+        }
 
     }
 
@@ -458,7 +484,28 @@ const App = (function () {
         UICtrl.clearInputState();
     }
 
-    const itemClearSubmit = function () {
+    const itemClearSubmit = async function () {
+
+
+        try{
+
+            const cleared = await itemCtrl.clearAllItems();
+
+            if(cleared){
+                UICtrl.clearItems();
+
+                  // Get a total money
+                  const totalMoney = itemCtrl.getTotalMoney();
+
+                  // Show total money
+                  UICtrl.showTotalMoney(totalMoney);
+
+            }
+            
+        }catch(error){
+            console.log(error);
+        }
+
 
         // Clear all from the data structure
         itemCtrl.clearAllItems();

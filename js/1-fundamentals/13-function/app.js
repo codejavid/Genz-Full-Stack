@@ -17,9 +17,9 @@ function greet(firstName = "John", lastName = "Doe") {
 
     // Old way of setting default parameters
 
-    if(typeof firstName === 'undefined') {
-        firstName = "Default first name";
-    }
+    // if(typeof firstName === 'undefined') {
+    //     firstName = "Default first name";
+    // }
 
     // if(typeof lastName === 'undefined') {
     //     lastName = "Default last name";

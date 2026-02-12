@@ -7,7 +7,7 @@ const taskList = document.querySelector(".collection");
 const clearBtn = document.querySelector(".clear-tasks");
 const filter = document.querySelector("#search");
 
-
+const submit = document.querySelector("#submit-btn");
 
 
 // Load all event listerners
@@ -19,7 +19,10 @@ function loadEventListerners(){
     document.addEventListener("DOMContentLoaded", getTasks);
 
     // Add task event
-    form.addEventListener("submit", addTask);
+    // form.addEventListener("submit", addTask);
+
+
+    submit.addEventListener("click", addTask);
 
     // Clear task lists
     clearBtn.addEventListener("click", clearTask);
@@ -29,7 +32,6 @@ function loadEventListerners(){
 
     // Filter task event
     filter.addEventListener("keyup", filterTasks);
-
 
 
 }
@@ -82,7 +84,7 @@ function getTasks(){
 
 function addTask(e){
 
-    e.preventDefault();
+    // e.preventDefault();
     
     // Validate
 

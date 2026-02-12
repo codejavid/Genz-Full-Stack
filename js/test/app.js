@@ -93,8 +93,170 @@
 // console.log(nums);
 // console.log(doubled);
 
-let nums = [1, 2, 3];
-let sum = nums.reduce((total, n) => total + n, 1);
+// let nums = [1, 2, 3];
+// let sum = nums.reduce((total, n) => total + n, 1);
 
 
-console.log(sum);
+// console.log(sum);
+
+// const arr = [1,2,3];
+
+// const [a,b] = [10,20];
+
+// console.log(a);
+
+// const object = {
+//     name:"Javid",
+//     age:29
+// }
+
+// const {name, age, x} = object;
+
+// console.log(name, age, x);
+
+// const a = [1,2];
+
+// console.log(a);
+
+// const b = [...a,3];
+// console.log(b);
+
+// let user = { name: "Javid" };
+// let newUser = { ...user, age: 15 };
+
+// console.log(user)
+// console.log(newUser)
+
+// const input = document.querySelector("#name");
+// const btn = document.querySelector("#btn");
+
+// btn.addEventListener("click", () => {
+//   console.log(input.value);
+// });
+
+
+// const li = document.createElement("li");
+
+// li.innerText = "New Item";
+
+// document.body.appendChild(li);
+
+// console.log(document.getElementById("demo").textContent);
+// console.log(document.getElementById("demo").innerText);
+
+// console.log("A");
+// console.log("B");
+// console.log("C");
+
+
+// console.log("A");
+
+// setTimeout(() => {
+//   console.log("B");
+// }, 0);
+
+// console.log("C");
+
+
+// function sum(...numbers) {
+
+//   console.log(numbers);
+  
+// }
+
+// sum(1,2,3);
+
+// const name = "Javid";
+// // const user = { name: name };
+// const user = { name };
+
+// console.log(user);
+
+
+// let testObj = {
+//   name:"test"
+// };
+
+// console.log(testObj.age);
+
+// let a = 10;
+
+
+
+// function foo() {
+//   let b = 20;
+//   console.log(a + b);
+// }
+
+
+// foo();
+
+// function Person(name) {
+//   this.name = name;
+// }
+
+// Person.prototype.sayHi = function () {
+//   console.log("Hi " + this.name);
+// };
+
+// const p1 = new Person("Javid");
+// console.log(p1);
+// p1.sayHi();
+
+// By value copy
+
+// let a = "im a";
+
+// console.log(a);
+
+// let b = a;
+
+// console.log(b);
+
+// a = "Hello";
+
+// console.log(a);
+// console.log(b);
+
+// By reference
+
+// let c = {
+//   name:"Hello"
+// }
+
+// let d = c;
+
+// c.name = "Hai";
+
+// console.log(c);
+// console.log(d);
+
+
+// function Person(name) {
+//   this.name = name
+// }
+
+// Person.prototype.sayHi = function () {
+//   console.log("Hi " + this.name);
+// };
+
+// const p1 = new Person("Javid");
+// const p2 = new Person("Jagan");
+
+// console.log(p1);
+// console.log(p2);
+// console.log(p1);
+
+// console.log(window);
+
+
+// this.alert(123);
+// window.alert(456);
+// alert(789)
+
+
+
+
+
+
+
